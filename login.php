@@ -1,11 +1,4 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: rahulmidha
- * Date: 2018-05-13
- * Time: 10:28 PM
- */
-?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -75,16 +68,15 @@
 </head>
 <body>
 
-
 <div id ="wrapper">
     <header>
         <h1>Customer Registration Website</h1>
-        <h2>portfolio with navbar</h2>
+        <h2>Submitted By Rahul Midha</h2>
     </header>
     <nav>
         <ul class = "main_menu">
             <li><a href="welcome.php">Welcome Page</a> </li>
-            <li><a href="#">Home Page</a> </li>
+            <li><a href="homepage.php">Home Page</a> </li>
             <li><a href="login.php">Login Page</a> </li>
             <li><a href="index.php">Registraton</a> </li>
         </ul>
@@ -92,8 +84,9 @@
 
     </nav>
 
+
     <div class ="wrap">
-        <form>
+        <form method="POST">
             <h2>Log In</h2>
             <input type="email" name="email" placeholder="Your Email" required>
             <input type="password" name="password" placeholder="Password" required>
@@ -102,7 +95,7 @@
 
             <br>
 
-            <input type ="submit" value="Login">
+            <input type ="submit" name="submit" value="Log-In" onclick="login()">
 
 
         </form>
@@ -110,3 +103,89 @@
 </div>
 </body>
 </html>
+
+<?php
+/**
+ * Created by PhpStorm.
+ * User: rahulmidha
+ * Date: 2018-05-13
+ * Time: 10:28 PM
+ */
+
+session_start();
+
+// connect to database
+$db = mysqli_connect("127.0.0.1","root","rahulmidha","user") or die("problem");
+
+
+
+
+//if (isset ($_POST['submit'])) {
+//    //session_start();
+////    $firstname = mysqli_real_escape_string($db, $_POST['firstname']);
+////    $lastname = mysqli_real_escape_string($db, $_POST['lastname']);
+////    $email = mysqli_real_escape_string($db, $_POST['email']);
+////    $password = mysqli_real_escape_string($db,  $_POST['password']);
+////    $confirmpassword = mysqli_real_escape_string($db, $_POST['confirmpassword']);
+////    $address = mysqli_real_escape_string($db, $_POST['address']);
+////    $postalcode = mysqli_real_escape_string($db, $_POST['postalcode']);
+//
+//    $email = $_POST['email'];
+//    $password = $_POST['password'];
+//
+//    $password = md5($password);
+//    $sql = "SELECT * FROM users WHERE email='$email' AND password='$password'";
+//    $result = mysqli_query($db, $sql);
+//
+//    if(mysqli_num_rows($result)==1){
+//        $_SESSION['message'] = "You are now logged in";
+//        $_SESSION['email']= $email;
+//        header("location: welcomeoutput.php"); //redirecting to home page
+//    }
+//    else{
+//        echo "<script>alert('invalid');</script>";
+//        $_SESSION['message'] = "Username/Password combination incorrect";
+//
+//    }
+//
+//}
+ //checking the 'user' name which is from Sign-In.html, is it empty or have some text
+if (isset ($_POST['submit'])) {
+//
+    $password = mysqli_real_escape_string($db, $_POST['password']);
+    $email = mysqli_real_escape_string($db, $_POST['email']);
+
+    $user_check_query = "SELECT * FROM users WHERE password='$password' and email='$email' LIMIT 1";
+    $result = mysqli_query($db, $user_check_query);
+
+    $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+    $_SESSION['firstname'] = $row['first_name'];
+    $_SESSION['lastname'] = $row['last_name'];
+    if(mysqli_num_rows($result)==1)
+    {
+        $_SESSION['email'] = $email;
+        //$_SESSION['firstname'] = $firstname;
+        //$_SESSION['lastname'] = $lastname;
+        //$_SESSION['postalcode'] = $postalcode;
+        header("location:welcomeoutput.php");
+    }
+    else{
+        //header("location:index.php");
+        echo "<script>alert('Incorrect combination of Email/Password'); location.href='login.php';</script>";
+    }
+}
+
+function Redirect($url, $permanent = false)
+{
+    if (headers_sent() === false)
+    {
+        header('Location: ' . $url, true, ($permanent === true) ? 301 : 302);
+    }
+
+    exit();
+}
+
+
+
+
+?>
